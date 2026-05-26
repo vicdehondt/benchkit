@@ -84,6 +84,7 @@ class RocksDBBench(Benchmark):
             "lock",
             "atomics",
             "use_lse",
+            "threshold",
         ]
 
     @staticmethod
@@ -92,6 +93,7 @@ class RocksDBBench(Benchmark):
             "lock",
             "atomics",
             "use_lse",
+            "threshold",
         ]
 
     def dependencies(self) -> List[PackageDependency]:
@@ -164,6 +166,7 @@ class RocksDBBench(Benchmark):
         bench_name: str = "readrandom",
         master_thread_core: int | None = None,
         nb_iterations: int = 40000,
+        threshold: int = 0,
         **kwargs,
     ) -> str:
         environment = self._preload_env(
@@ -174,6 +177,12 @@ class RocksDBBench(Benchmark):
             master_thread_core=master_thread_core,
             **kwargs,
         )
+
+        if environment is None:
+            environment = {}
+
+        if (lock != ""):
+            environment["THRESHOLD"] = str(threshold)
 
         # TODO Duplicate with leveldb, need to refactor
         duration_num = (
