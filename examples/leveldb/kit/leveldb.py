@@ -78,6 +78,7 @@ class LevelDBBench(Benchmark):
             "use_lse",
             "freshdb_foreach_run",
             "num",
+            "threshold",
         ]
 
     @staticmethod
@@ -86,6 +87,7 @@ class LevelDBBench(Benchmark):
             "lock",
             "atomics",
             "use_lse",
+            "threshold",
         ]
 
     @staticmethod
@@ -164,6 +166,7 @@ class LevelDBBench(Benchmark):
         master_thread_core: Optional[int] = None,
         num: int = 1000000,
         freshdb_foreach_run: bool = False,
+        threshold: int = 0,
         **kwargs,
     ) -> str:
         if freshdb_foreach_run:
@@ -187,6 +190,12 @@ class LevelDBBench(Benchmark):
             master_thread_core=master_thread_core,
             **kwargs,
         )
+
+        if environment is None:
+            environment = {}
+
+        if (lock != ""):
+            environment["THRESHOLD"] = str(threshold)
 
         """
         Notice that, distinct from other LevelDb benchmarks using the `num` parameter,
