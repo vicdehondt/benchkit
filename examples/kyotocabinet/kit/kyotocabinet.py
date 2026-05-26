@@ -132,6 +132,7 @@ class KyotoCabinetBench(Benchmark):
             "lock",
             "atomics",
             "use_lse",
+            "threshold",
         ]
 
     @staticmethod
@@ -195,6 +196,7 @@ class KyotoCabinetBench(Benchmark):
         atomics: str = None,
         test_name: str = "",
         master_thread_core: int | None = None,
+        threshold: int = 0,
         **kwargs,
     ) -> str:
         environment = self._preload_env(
@@ -214,6 +216,9 @@ class KyotoCabinetBench(Benchmark):
                 # the first worker thread in kyoto is the third one
                 # (TIDs 0 & 1 are background threads)
                 environment["ASSIGN_FIRST_THREAD"] = "2"
+
+        if (lock != ""):
+            environment["THRESHOLD"] = str(threshold)
 
         if "kccachetest" == test_name:
             run_command = [
