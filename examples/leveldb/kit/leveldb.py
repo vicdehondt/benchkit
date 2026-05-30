@@ -78,7 +78,8 @@ class LevelDBBench(Benchmark):
             "use_lse",
             "freshdb_foreach_run",
             "num",
-            "threshold",
+            "migration_threshold",
+            "priority_threshold",
         ]
 
     @staticmethod
@@ -87,7 +88,8 @@ class LevelDBBench(Benchmark):
             "lock",
             "atomics",
             "use_lse",
-            "threshold",
+            "migration_threshold",
+            "priority_threshold",
         ]
 
     @staticmethod
@@ -166,7 +168,8 @@ class LevelDBBench(Benchmark):
         master_thread_core: Optional[int] = None,
         num: int = 1000000,
         freshdb_foreach_run: bool = False,
-        threshold: int = 0,
+        migration_threshold: int = -1,
+        priority_threshold: int = -1,
         **kwargs,
     ) -> str:
         if freshdb_foreach_run:
@@ -191,11 +194,14 @@ class LevelDBBench(Benchmark):
             **kwargs,
         )
 
-        if environment is None:
-            environment = {}
-
-        if (lock != ""):
-            environment["THRESHOLD"] = str(threshold)
+        if (migration_threshold != -1 and lock != ""):
+            if environment is None:
+                environment = {}
+            environment["MIGRATION_THRESHOLD"] = str(migration_threshold)
+        if (priority_threshold != -1 and lock != ""):
+            if environment is None:
+                environment = {}
+            environment["PRIORITY_THRESHOLD"] = str(priority_threshold)
 
         """
         Notice that, distinct from other LevelDb benchmarks using the `num` parameter,
